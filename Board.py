@@ -9,7 +9,7 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
 class Board:
-    def __init__(self):
+    def __init__(self, ped_list = {}):
         self.board_height = 400
         self.board_width = 800
         self.screen_size = (1000, 600)
@@ -17,11 +17,7 @@ class Board:
         self.robot_pos = ()
         self.screen = pygame.display.set_mode(self.screen_size)
         self.rect = self.draw_board()
-        self.pedistal_list = {
-            "white":[],
-            "green":[],
-            "red":[]
-        }
+        self.pedistal_list = ped_list
         self.pedistal_types = [
             {
                 "type":"white",
@@ -56,11 +52,7 @@ class Board:
                 pygame.draw.line(self.screen, next_ped.color, ped.pos, next_ped.pos)
 
     def populate_pedistals(self):
-        self.pedistal_list = {
-            "white":[],
-            "green":[],
-            "red":[]
-        }
+        self.pedistal_list = {}
         for ped_type in self.pedistal_types:
             for x in range(0, ped_type["quantity"]):
                 ped = Pedistal()
@@ -68,6 +60,8 @@ class Board:
                 ped_y = random.randint(self.rect.top + self.pedistal_size, self.rect.bottom - self.pedistal_size)
                 ped.pos = ped_x,ped_y 
                 ped.color = ped_type["color_rgb"]
+                if ped_type["type"] not in self.pedistal_list:
+                    self.pedistal_list[ped_type["type"]] = []
                 self.pedistal_list[ped_type["type"]].append(ped)
 
     def make_ped_graph(self):
