@@ -1,72 +1,147 @@
-# Python3 program to find distance between
-# two nodes in BST
-class newNode:
+# Binary Search Tree operations in Python
  
-    # Constructor to create a new node
-    def __init__(self, data):
-        self.key = data
-        self.left = None
-        self.right = None
  
-# Standard BST insert function
-def insert(root, key):
-    if root == None:
-        root = newNode(key)
-    elif root.key > key:
-        root.left = insert(root.left, key)
-    elif root.key < key:
-        root.right = insert(root.right, key)
-    return root
+# Create a node
+class Node:
+   def __init__(self, key,class_type,x_y):
+       self.key = key
+       self.left = None
+       self.right = None
+       self.class_type = class_type
+       self.x_y = x_y
  
-# This function returns distance of x from
-# root. This function assumes that x exists
-# in BST and BST is not NULL.
-def distanceFromRoot(root, x):
-    if root.key == x:
-        return 0
-    elif root.key > x:
-        return 1 + distanceFromRoot(root.left, x)
-    return 1 + distanceFromRoot(root.right, x)
  
-# Returns minimum distance between a and b.
-# This function assumes that a and b exist
-# in BST.
-def distanceBetween2(root, a, b):
-    if root == None:
-        return 0
+# Inorder traversal
+def inorder(root):
+   if root is not None:
+       # Traverse left
+       print("In the tree")
+       inorder(root.left)
  
-    # Both keys lie in left
-    if root.key > a and root.key > b:
-        return distanceBetween2(root.left, a, b)
+       # Traverse root
+       print(str(root.key) + "->", end=' ')
  
-    # Both keys lie in right
-    if root.key < a and root.key < b: # same path
-        return distanceBetween2(root.right, a, b)
+       # Traverse right
+       inorder(root.right)
  
-    # Lie in opposite directions
-    # (Root is LCA of two nodes)
-    if root.key >= a and root.key <= b:
-        return (distanceFromRoot(root, a) +
-                distanceFromRoot(root, b))
+def find_path(root):
+   if root is not None:
+       # Traverse left
+       inorder(root.left)
  
-# This function make sure that a is smaller
-# than b before making a call to findDistWrapper()
-def findDistWrapper(root, a, b):
-    if a > b:
-        a, b = b, a
-    return distanceBetween2(root, a, b)
+       # Traverse root
+       print(str(root.key) + "->", end=' ')
  
-# Driver code
-if __name__ == '__main__':
-    root = None
-    root = insert(root, 20)
-    insert(root, 10)
-    insert(root, 5)
-    insert(root, 15)
-    insert(root, 30)
-    insert(root, 25)
-    insert(root, 35)
-    a, b = 5, 55
-    print(findDistWrapper(root, 5, 35))
+       # Traverse right
+       inorder(root.right)
+# Inorder traversal
+def inorder_return(root):
+   if root is not None:
+        print(str(root.key) + "->", end=' ')
+        # Traverse left
+        inorder(root.left)
+    
+        # Traverse root
+
+        print(str(root.key) + "->", end=' ')
+    
+        #Travesre right
+        inorder(root.right)
+
+
  
-# This code is contributed by PranchalK
+def inorder_grouping(root,group,groups):
+    print("Grouping")
+    if root is not None:
+
+        # Traverse left
+        size = sum(1 for num in group)
+        #If the group is full
+        if size == 3:
+            groups.append(group)
+            group = []
+
+            # Add pedastal to current group
+        if root.class_type == "Pedastal":
+            group.append(root.class_type)
+        inorder(root.left)
+
+        # Traverse root
+        print(str(root.key) + "->", end=' ')
+    
+        # Traverse right
+        inorder(root.right)
+
+            
+    groups.append(group)
+    print("Group: ")
+    print(groups)
+
+
+ 
+# Insert a node
+def insert(node, key, class_type,x_y):
+ 
+   # Return a new node if the tree is empty
+   if node is None:
+       return Node(key,class_type,x_y)
+ 
+   # Traverse to the right place and insert the node
+   if key < node.key:
+       node.left = insert(node.left, key,class_type,x_y)
+   else:
+       node.right = insert(node.right, key,class_type,x_y)
+ 
+   return node
+ 
+ 
+# Find the inorder successor
+def minValueNode(node):
+   current = node
+ 
+   # Find the leftmost leaf0.0421
+   while(current.left is not None):
+       current = current.left
+ 
+   return current
+ 
+ 
+# Deleting a node
+def deleteNode(root, key):
+ 
+   # Return if the tree is empty
+   if root is None:
+       return root
+ 
+   # Find the node to be deleted
+   if key < root.key:
+       root.left = deleteNode(root.left, key)
+   elif(key > root.key):
+       root.right = deleteNode(root.right, key)
+   else:
+       # If the node is with only one child or no child
+       if root.left is None:
+           temp = root.right
+           root = None
+           return temp
+ 
+       elif root.right is None:
+           temp = root.left
+           root = None
+           return temp
+ 
+       # If the node has two children,
+       # place the inorder successor in position of the node to be deleted
+       temp = minValueNode(root.right)
+ 
+       root.key = temp.key
+ 
+       # Delete the inorder successor
+       root.right = deleteNode(root.right, temp.key)
+ 
+   return root
+ 
+ 
+ 
+ 
+
