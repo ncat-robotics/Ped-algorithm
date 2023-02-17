@@ -10,6 +10,7 @@ from data_structures.tree import *
 import networkx as nx
 import matplotlib.pyplot as plt
 import board.Board as board
+import board.mapping_code as map
 
  
 CLASSES = config.CLASSES
@@ -27,6 +28,7 @@ class map_help:
  tree_dist = None
  edges = []
  formated_nodes = []
+ map_display = []
  
  def __init__(self,ref):
    self.ref = ref
@@ -34,6 +36,7 @@ class map_help:
    self.G = nx.Graph()
    self.G_O = nx.Graph()
    self.game_board = board.Board()
+   
  
  def new_reference(self,ref):
    self.ref = ref
@@ -193,6 +196,13 @@ class map_help:
     self.formated_nodes = self.game_board.format_pedestal_list(self.node)
     self.game_board.update_pedestal_list(self.formated_nodes)
     self.game_board.make_ped_graph()
+  
+ def generate_map(self):
+    self.map_display = map.Map(self.ref)
+    self.map_display.insert_nodes(self.node)
+    self.map_display.create_map()
+    self.map_display.display_map()
+
  
  def create_graph(self):
     graph_buffer = graph.graph(self.node)
