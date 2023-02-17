@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 # Read the input image
-img = cv2.imread(r'C:\Users\estde\Documents\Object Detection\document_scanner\Ped-algorithm\20221101_182957.jpg')
+img = cv2.imread(r'C:\Users\estde\Documents\Object Detection\document_scanner\Ped-algorithm\test_images\20221101_182957.jpg')
 
 img = cv2.resize(img, (800, 800))
 

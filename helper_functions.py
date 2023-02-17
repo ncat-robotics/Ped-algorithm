@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 import tensorflow as tf
 
-import config
+import model_dependencies.config as config
 #import rospy
 #from std_msgs.msg import String
 #pub = rospy.Publisher('chatter', String, queue_size=10)

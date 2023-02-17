@@ -40,6 +40,29 @@ class Board:
             }   
         ]
 
+    def format_pedestal_list(self,peds):
+        formated_ped = Pedistal()
+        formated_list = []
+        for ped in peds:
+            formated_ped.pos = ped[2]  #format position
+            if ped[1] == 'Red_Pedestal':
+                formated_ped.color = (255,0,0)  #format label
+            elif ped[1] == 'Green_Pedestal':
+                formated_ped.color = (0,255,0)  #format label
+            elif ped[1] == 'White_Pedestal':
+                formated_ped.color = (255,255,255)  #format label
+            formated_list.append(formated_ped)
+        return formated_list
+        
+
+    def update_pedestal_list(self,peds):
+        for ped in peds:
+            if ped.color == (255,255,255):
+                self.pedistal_list["white"].append(ped)
+            if ped.color == (0,255,0):
+                self.pedistal_list["green"].append(ped)
+            if ped.color == (255,0,0):
+                self.pedistal_list["red"].append(ped)
 
     def draw_board(self):
         x, y = (pygame.display.get_window_size())
@@ -71,6 +94,8 @@ class Board:
                 self.pedistal_list[ped_type["type"]].append(ped)
 
     def make_ped_graph(self):
+        #print(self.pedistal_list)
+        print(self.pedistal_list["red"][0].color)
         for white_ped in self.pedistal_list["white"]:
             white_ped.next = self.pedistal_list["green"]
         for green_ped in self.pedistal_list["green"]:

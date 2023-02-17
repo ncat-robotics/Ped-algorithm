@@ -8,3 +8,4 @@ class Pedistal:
         self.prev = []
         self.rect = rect
     #def draw_circle
+ 

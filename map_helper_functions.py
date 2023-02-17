@@ -2,26 +2,21 @@ import cv2
 import numpy as np
 import tensorflow as tf
 from scipy.spatial import distance as dist
-import config
+import model_dependencies.config as config
 import math
-import tree
-from tree import *
+import data_structures.graph as graph
+import data_structures.tree as tree
+from data_structures.tree import *
 import networkx as nx
 import matplotlib.pyplot as plt
+import board.Board as board
 
  
 CLASSES = config.CLASSES
  
-class help:
- 
- def __init__(self,ref):
-   self.ref = ref
-   # Create a graph object
-   self.G = nx.Graph()
-   self.G_O = nx.Graph()
- 
- def new_reference(self,ref):
-   self.ref = ref
+class map_help:
+
+ graph_buffer = []
  travel_x = 0
  travel_y = 0
  D = 0
@@ -31,6 +26,18 @@ class help:
  groups = []
  tree_dist = None
  edges = []
+ formated_nodes = []
+ 
+ def __init__(self,ref):
+   self.ref = ref
+   # Create a graph object
+   self.G = nx.Graph()
+   self.G_O = nx.Graph()
+   self.game_board = board.Board()
+ 
+ def new_reference(self,ref):
+   self.ref = ref
+ 
  # Define a list of colors for visualization
  COLORS = np.random.randint(0, 255, size=(len(CLASSES), 3), dtype=np.uint8)
  
@@ -167,82 +174,31 @@ class help:
      elif(class_id == 5 or class_id == 6 ):
        self.node.append([self.D,"Red_Pedestal",[self.travel_x,self.travel_y]])
 
+     
+
+
+
  
     
      # Labels distance on the the map image
      cv2.putText(original_image_np, "{:.1f}cm".format(self.D), (int(mX), int(mY - 10)),
        cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
+      # Return the final map image
+     original_uint8 = original_image_np.astype(np.uint8)
+     return original_uint8
 
-  ###################################### Add Nodes to Graph #########################################################
-   for nod in self.node:
-    self.G.add_node(nod[0], label=nod[1], distance=nod[2])
-    self.G_O.add_node(nod[0], label=nod[1], distance=nod[2])
-
-
-  ############################## Define Edges to each node ########################
-   i = 1
-   for X in self.node:
-    j = i
-    while j < len(self.node):
-      temp_distance = X[0] - self.node[j][0]
-      self.edges.append([X[0],self.node[j][0],temp_distance])
-      j = j +1
-    i = i +1
-   # Add the edges to the graph
-   for edge in self.edges:
-      self.G.add_edge(edge[0], edge[1], weight=edge[2])
-      self.G_O.add_edge(edge[0], edge[1], weight=edge[2])
-
-  ##############################################Find Shortest Path ###################################
-  # Find the shortest path between "Red_Ped" and "Green_Ped" nodes
-   try:
-    source = [nod[0] for nod in self.node if nod[1] == "Red_Pedestal"][0]
-    print("source: ")
-    print(source)
-    target = [nod[0] for nod in self.node if nod[1] == "Green_Pedestal"][0]
-    shortest_path = nx.dijkstra_path(self.G, source, target, weight='weight')
-    print("Shortest path between Red_Ped and Green_Ped:", shortest_path)
-    # Find the shortest path between "Green_Ped" and "White_Ped" nodes
-    for node in self.node:
-      if node[0] == shortest_path[1] and node[1] =="Green_Ped":
-          source = node[0]
-   finally:
-
-
-    ############################# Sorting Section #########################
-    # creates and prints the final binary search tree
-    for X in self.node:
-      self.tree_dist = insert(self.tree_dist,X[0],X[1],X[2])
-    print("Tree ")
-    inorder(self.tree_dist)
-    inorder_grouping(self.tree_dist,self.group,self.groups)
     
-    #OR
-    def sort_priority(elem):
-      return elem[0]
-
-    for obj in self.node:
-      self.sorted_data = sorted(self.node,key = sort_priority, reverse = False)
-
-      #OR
-
-    # Return the final map image
-    original_uint8 = original_image_np.astype(np.uint8)
-    return original_uint8
  ############################### Draw the graph,trees,whatever ##################################
- def draw_raw_graph(self):
-   pos = nx.spring_layout(self.G_O)
-   nx.draw(self.G_O, pos, with_labels=True)
-   labels = nx.get_edge_attributes(self.G_O, 'weight')
-   nx.draw_networkx_edge_labels(self.G_O, pos, edge_labels=labels)
-   plt.show()
-   
- def draw_raw_graph(self):
-   pos = nx.spring_layout(self.G)
-   nx.draw(self.G, pos, with_labels=True)
-   labels = nx.get_edge_attributes(self.G, 'weight')
-   nx.draw_networkx_edge_labels(self.G, pos, edge_labels=labels)
-   plt.show()
+ def py_game_board(self):
+    self.formated_nodes = self.game_board.format_pedestal_list(self.node)
+    self.game_board.update_pedestal_list(self.formated_nodes)
+    self.game_board.make_ped_graph()
+ 
+ def create_graph(self):
+    graph_buffer = graph.graph(self.node)
+    graph_buffer.add_nodes()
+    graph_buffer.create_edges()
+    graph_buffer.draw_raw_graph()
 
  def return_tree(self):
    values = []
@@ -261,41 +217,3 @@ class help:
  
  
 
-"""
-   target = [node[0] for node in self.node if node[1] == "White_Ped"][0]
-   shortest_path_2 = nx.dijkstra_path(G, source, target, weight='weight')
-   print("Shortest path between Green_Ped and White_Ped:", shortest_path_2)
-   for x in shortest_path_2:    
-     self.G.remove_node(x)
-     for node in self.node:
-        if x == node[0]:
-            self.node.remove(node)
-           
-   travel = []
-   travel.append(shortest_path_2)
-   print("Travel: ")
-   print(travel)
-
-
-
-
-   # Find the shortest path between "Green_Ped" and "White_Ped" nodes
-   source = [node[0] for node in self.node if node[1] == "Green_Ped"][0]
-   print("source: ")
-   print(source)
-   target = [node[0] for node in self.node if node[1] == "White_Ped"][0]
-   shortest_path = nx.dijkstra_path(self.G, source, target, weight='weight')
-   print("Shortest path between Green_Ped and White_Ped:", shortest_path)
-
-
-   travel.append(shortest_path)
-   print("Travel: ")
-   print(travel)
-
-
-   for x in shortest_path:    
-    self.G.remove_node(x)
-    for node in self.node:
-        if x == node[0]:
-            self.node.remove(node)
-"""
