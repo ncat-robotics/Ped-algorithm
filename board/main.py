@@ -10,7 +10,7 @@
  
 # Import a library of functions called 'pygame'
 import pygame
-from Board import Board
+from board.Board import Board
 
 
     

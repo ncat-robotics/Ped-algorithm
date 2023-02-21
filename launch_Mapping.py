@@ -79,15 +79,12 @@ image = cv2.imread('/home/autodrone-hardware/Documents/GitHub/Sensor_Sandbox/res
 cv2.imshow('Scanned Document', image)
 
 
+#help_funcs.py_game_board()
+help_funcs.create_graph()
+help_funcs.generate_map()
+ 
 
-help_funcs.draw_raw_graph()
- 
-help_funcs.new_reference([0,0])
-vals = help_funcs.return_sorted()
- 
- 
-vals = help_funcs.return_tree()
- 
+  
 
  
 cv2.waitKey(0)

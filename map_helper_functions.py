@@ -11,6 +11,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import board.Board as board
 import board.mapping_code as map
+import pygame
 
  
 CLASSES = config.CLASSES
@@ -29,6 +30,13 @@ class map_help:
  edges = []
  formated_nodes = []
  map_display = []
+
+# Define some colors
+ BLACK = (0, 0, 0)
+ WHITE = (255, 255, 255)
+ BLUE = (0, 0, 255)
+ GREEN = (0, 255, 0)
+ RED = (255, 0, 0)
  
  def __init__(self,ref):
    self.ref = ref
@@ -168,34 +176,69 @@ class map_help:
      self.D =  math.sqrt((pow((real_start_x-real_mX),2) + pow((real_start_y- real_mY),2)))
      print("Distance: ")
      print(self.D)
- 
+     
      # Adds the detetections label, distance, and coordinate to a linked list
      if(class_id == 0 or class_id == 7 or class_id == 8 or class_id == 9 or class_id == 10 ):
+       print("first if")
        self.node.append([self.D,"Duck",[self.travel_x,self.travel_y]])
      elif(class_id == 3 or class_id == 4 ):
        self.node.append([self.D,"Green_Pedestal",[self.travel_x,self.travel_y]])
      elif(class_id == 5 or class_id == 6 ):
        self.node.append([self.D,"Red_Pedestal",[self.travel_x,self.travel_y]])
 
-     
-
-
-
- 
-    
      # Labels distance on the the map image
      cv2.putText(original_image_np, "{:.1f}cm".format(self.D), (int(mX), int(mY - 10)),
        cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
-      # Return the final map image
-     original_uint8 = original_image_np.astype(np.uint8)
-     return original_uint8
+     
+     # Return the final map image
+   original_uint8 = original_image_np.astype(np.uint8)
+   return original_uint8
 
     
  ############################### Draw the graph,trees,whatever ##################################
  def py_game_board(self):
+    # Initialize the game engine
+    pygame.init()
+    done = False
+    clock = pygame.time.Clock()
+    screen = self.game_board.screen
     self.formated_nodes = self.game_board.format_pedestal_list(self.node)
     self.game_board.update_pedestal_list(self.formated_nodes)
     self.game_board.make_ped_graph()
+    restart_flag = False
+
+        # Loop as long as done == False
+    while not done:
+    
+        for event in pygame.event.get():  # User did something
+            if event.type == pygame.QUIT:  # If user clicked close
+                done = True  # Flag that we are done so we exit this loop
+    
+        # All drawing code happens after the for loop and but
+        # inside the main while not done loop.
+        if pygame.key.get_pressed()[pygame.K_r] and not restart_flag:
+            self.game_board.populate_pedistals()
+            restart_flag = True
+        if not pygame.key.get_pressed()[pygame.K_r] and restart_flag:
+            restart_flag = False
+        # Clear the screen and set the screen background
+        screen.fill(self.WHITE)
+    
+        # Draw a rectangle
+        
+        self.game_board.draw_board()
+        self.game_board.draw_pedistals()
+    
+        # Go ahead and update the screen with what we've drawn.
+        # This MUST happen after all the other drawing commands.
+        pygame.display.flip()
+    
+        # This limits the while loop to a max of 60 times per second.
+        # Leave this out and we will use all CPU we can.
+        clock.tick(60)
+    
+    # Be IDLE friendly
+    pygame.quit()
   
  def generate_map(self):
     self.map_display = map.Map(self.ref)
@@ -203,7 +246,6 @@ class map_help:
     self.map_display.create_map()
     self.map_display.display_map()
 
- 
  def create_graph(self):
     graph_buffer = graph.graph(self.node)
     graph_buffer.add_nodes()

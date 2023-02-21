@@ -6,6 +6,7 @@ class graph:
         self.G = nx.Graph()
         self.G_O = nx.Graph()
         self.node = node
+        self.edges = []
  
  ###################################### Add Nodes to Graph #########################################################
     def add_nodes(self):

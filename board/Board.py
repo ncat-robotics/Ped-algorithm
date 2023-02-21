@@ -1,5 +1,5 @@
 import pygame
-from Pedistal import Pedistal
+from board.Pedistal import Pedistal
 import random
 
 BLACK = (0, 0, 0)
@@ -9,7 +9,7 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
 class Board:
-    def __init__(self, ped_list = {}):
+    def __init__(self):
         self.board_height = 400
         self.board_width = 800
         self.screen_size = (1000, 600)
@@ -17,7 +17,11 @@ class Board:
         self.robot_pos = ()
         self.screen = pygame.display.set_mode(self.screen_size)
         self.rect = self.draw_board()
-        self.pedistal_list = ped_list
+        self.pedistal_list = {
+            "white":[],
+            "green":[],
+            "red":[]
+        }
         self.pedistal_types = [
             {
                 "type":"white",
@@ -40,7 +44,7 @@ class Board:
         formated_ped = Pedistal()
         formated_list = []
         for ped in peds:
-            formated_ped.pos = ped[2]  #format position
+            formated_ped.pos = (abs(ped[2][0])*50, abs(ped[2][1])*50) #format position
             if ped[1] == 'Red_Pedestal':
                 formated_ped.color = (255,0,0)  #format label
             elif ped[1] == 'Green_Pedestal':
@@ -54,11 +58,11 @@ class Board:
     def update_pedestal_list(self,peds):
         for ped in peds:
             if ped.color == (255,255,255):
-                self.pedistal_list["white"].append(ped)
+                self.pedistal_list['white'].append(ped)
             if ped.color == (0,255,0):
-                self.pedistal_list["green"].append(ped)
+                self.pedistal_list['green'].append(ped)
             if ped.color == (255,0,0):
-                self.pedistal_list["red"].append(ped)
+                self.pedistal_list['red'].append(ped)
 
     def draw_board(self):
         x, y = (pygame.display.get_window_size())
@@ -89,11 +93,11 @@ class Board:
 
     def make_ped_graph(self):
         #print(self.pedistal_list)
-        print(self.pedistal_list["red"][0].color)
-        for white_ped in self.pedistal_list["white"]:
-            white_ped.next = self.pedistal_list["green"]
-        for green_ped in self.pedistal_list["green"]:
-            green_ped.next = self.pedistal_list["red"]
-            green_ped.prev = self.pedistal_list["white"]
-        for red_ped in self.pedistal_list["red"]:
-            red_ped.prev = self.pedistal_list["green"]    
+        print(self.pedistal_list['red'])
+        for white_ped in self.pedistal_list['white']:
+            white_ped.next = self.pedistal_list['green']
+        for green_ped in self.pedistal_list['green']:
+            green_ped.next = self.pedistal_list['red']
+            green_ped.prev = self.pedistal_list['white']
+        for red_ped in self.pedistal_list['red']:
+            red_ped.prev = self.pedistal_list['green']    
