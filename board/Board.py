@@ -9,7 +9,7 @@ GREEN = (0, 255, 0)
 RED = (255, 0, 0)
 
 class Board:
-    def __init__(self):
+    def __init__(self, ):
         self.board_height = 400
         self.board_width = 800
         self.screen_size = (1000, 600)
@@ -44,7 +44,7 @@ class Board:
         formated_ped = Pedistal()
         formated_list = []
         for ped in peds:
-            formated_ped.pos = (abs(ped[2][0])*50, abs(ped[2][1])*50) #format position
+            formated_ped.pos = (abs(ped[2][0])*10, abs(ped[2][1])*10) #format position
             if ped[1] == 'Red_Pedestal':
                 formated_ped.color = (255,0,0)  #format label
             elif ped[1] == 'Green_Pedestal':

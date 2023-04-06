@@ -30,7 +30,9 @@ class map_help:
  edges = []
  formated_nodes = []
  map_display = []
-
+ translations = []
+ instructions = []
+ 
 # Define some colors
  BLACK = (0, 0, 0)
  WHITE = (255, 255, 255)
@@ -40,7 +42,7 @@ class map_help:
  
  def __init__(self,ref):
    self.ref = ref
-   # Create a graph object
+   # Create a graph objecthelp_funcs.generate_map()
    self.G = nx.Graph()
    self.G_O = nx.Graph()
    self.game_board = board.Board()
@@ -115,6 +117,7 @@ class map_help:
  
    # Plot the detection results on the input image
    original_image_np = original_image.numpy().astype(np.uint8)
+   self.node.append([0,"Robot",[0,0]])
    for obj in results:
      # Convert the object bounding box from relative coordinates to absolute
      # coordinates based on the original image resolution
@@ -131,9 +134,12 @@ class map_help:
      class_id = int(obj['class_id'])
      x_ratio = 0.021 * math.cos(20)
      y_ratio = 0.0421 #* math.cos(20)
+
+     # refrence coordinates in terms of pixels
      start_x = self.ref[0]
      start_y = self.ref[1]
- 
+
+    # refrence point coordinates in terms of cm
      real_start_x = start_x * x_ratio
      real_start_y = start_y * y_ratio
      # Draw the bounding box and label on the image
@@ -180,17 +186,27 @@ class map_help:
      # Adds the detetections label, distance, and coordinate to a linked list
      if(class_id == 0 or class_id == 7 or class_id == 8 or class_id == 9 or class_id == 10 ):
        print("first if")
-       self.node.append([self.D,"Duck",[self.travel_x,self.travel_y]])
+       self.node.append([self.D,"Duck",(self.travel_x,self.travel_y)])
      elif(class_id == 3 or class_id == 4 ):
-       self.node.append([self.D,"Green_Pedestal",[self.travel_x,self.travel_y]])
+       self.node.append([self.D,"Green_Pedestal",(self.travel_x,self.travel_y)])
      elif(class_id == 5 or class_id == 6 ):
-       self.node.append([self.D,"Red_Pedestal",[self.travel_x,self.travel_y]])
+       self.node.append([self.D,"Red_Pedestal",(self.travel_x,self.travel_y)])
+      
 
      # Labels distance on the the map image
      cv2.putText(original_image_np, "{:.1f}cm".format(self.D), (int(mX), int(mY - 10)),
        cv2.FONT_HERSHEY_SIMPLEX, 0.55, color, 2)
      
      # Return the final map image
+   self.node.append([16,"Green_Pedestal",(5,23)])
+   self.node.append([4,"Green_Pedestal",(3,10)])
+   self.node.append([20,"White_Pedestal",(18,16)])
+   self.node.append([5,"White_Pedestal",(6,10)])
+   self.node.append([17,"White_Pedestal",(-10,9)])
+   self.node.append([30,"Statue1",(28,40)])
+   self.node.append([11,"Statue2",(0,17)])
+   self.node.append([-11,"Statue3",(-8,17)])
+   
    original_uint8 = original_image_np.astype(np.uint8)
    return original_uint8
 
@@ -214,28 +230,28 @@ class map_help:
             if event.type == pygame.QUIT:  # If user clicked close
                 done = True  # Flag that we are done so we exit this loop
     
-        # All drawing code happens after the for loop and but
-        # inside the main while not done loop.
-        if pygame.key.get_pressed()[pygame.K_r] and not restart_flag:
-            self.game_board.populate_pedistals()
-            restart_flag = True
-        if not pygame.key.get_pressed()[pygame.K_r] and restart_flag:
-            restart_flag = False
-        # Clear the screen and set the screen background
-        screen.fill(self.WHITE)
-    
-        # Draw a rectangle
+            # All drawing code happens after the for loop and but
+            # inside the main while not done loop.
+            if pygame.key.get_pressed()[pygame.K_r] and not restart_flag:
+                self.game_board.populate_pedistals()
+                restart_flag = True
+            if not pygame.key.get_pressed()[pygame.K_r] and restart_flag:
+                restart_flag = False
+            # Clear the screen and set the screen background
+            screen.fill(self.WHITE)
         
-        self.game_board.draw_board()
-        self.game_board.draw_pedistals()
-    
-        # Go ahead and update the screen with what we've drawn.
-        # This MUST happen after all the other drawing commands.
-        pygame.display.flip()
-    
-        # This limits the while loop to a max of 60 times per second.
-        # Leave this out and we will use all CPU we can.
-        clock.tick(60)
+            # Draw a rectangle
+            
+            self.game_board.draw_board()
+            self.game_board.draw_pedistals()
+        
+            # Go ahead and update the screen with what we've drawn.
+            # This MUST happen after all the other drawing commands.
+            pygame.display.flip()
+        
+            # This limits the while loop to a max of 60 thelp_funcs.generate_map()imes per second.
+            # Leave this out and we will use all CPU we can.
+            clock.tick(60)
     
     # Be IDLE friendly
     pygame.quit()
@@ -247,10 +263,20 @@ class map_help:
     self.map_display.display_map()
 
  def create_graph(self):
-    graph_buffer = graph.graph(self.node)
-    graph_buffer.add_nodes()
-    graph_buffer.create_edges()
-    graph_buffer.draw_raw_graph()
+    graph_buffer = graph.Graph(self.node)
+    print(" Shortest Path:")
+    graph_buffer.draw_graph()
+    self.translations = graph_buffer.shortest_path()
+    graph_buffer.draw_graph()
+  
+ def format_instructions(self):
+   for x in self.translations:
+     if x[0] >= 0:
+       self.instructions.append()
+       
+
+ 
+    
 
  def return_tree(self):
    values = []

@@ -19,7 +19,7 @@ import os
 from PIL import Image
 import model_dependencies.config as config
  
-#from pyecharts.charts import Bar
+#from pyecharts.charts import Barhelp_funcs.generate_map()
  
  
 #help_funcs = help.help([1200,2500]) #change reference point
@@ -30,21 +30,14 @@ MODEL_NAME = config.MODEL_NAME
 cwd = os.getcwd()
  
 DETECTION_THRESHOLD = 0.3
- 
-# Change the test file path to your test image
-#INPUT_IMAGE_PATH = 'dataset/test/IMG_2347_jpeg_jpg.rf.7c71ac4b9301eb358cd4a832844dedcb.jpg'
- 
- 
+
 # Load the TFLite model
 model_path = f'{MODEL_PATH}/{MODEL_NAME}'
 interpreter = tf.lite.Interpreter(model_path=model_path)
 interpreter.allocate_tensors()
  
  
- 
- 
-def midpoint(ptA, ptB,ptC,ptD):
-   return ((ptA + ptB) * 0.5, (ptC + ptD) * 0.5)
+
 
  
  
@@ -81,7 +74,8 @@ cv2.imshow('Scanned Document', image)
 
 #help_funcs.py_game_board()
 help_funcs.create_graph()
-help_funcs.generate_map()
+#help_funcs.py_game_board()
+#help_funcs.generate_map()
  
 
   
