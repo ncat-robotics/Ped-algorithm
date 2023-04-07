@@ -212,7 +212,7 @@ class map_help:
 
     
  ############################### Draw the graph,trees,whatever ##################################
- def py_game_board(self):
+ def py_game_board(self): # note take out for real version
     # Initialize the game engine
     pygame.init()
     done = False
